@@ -89,23 +89,23 @@
                                 onchange="toggleDateTimeFields(1)">
                             <label class="custom-control-label" for="allDay1">Ganztägiger Termin</label>
                         </div>
-                        <div class="form-row startDateTimeGroup" id="startDateTimeGroup1">
+                        <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="startDate1">Startdatum:</label>
                                 <input type="date" class="form-control startDate" id="startDate1">
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="startTime1">Startzeit:</label>
+                                <label for="startTimeLabel1" class="time-label">Startzeit:</label>
                                 <input type="time" class="form-control startTime" id="startTime1">
                             </div>
                         </div>
-                        <div class="form-row endDateTimeGroup" id="endDateTimeGroup1">
+                        <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="endDate1">Enddatum:</label>
                                 <input type="date" class="form-control endDate" id="endDate1">
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="endTime1">Endzeit:</label>
+                                <label for="endTimeLabel1" class="time-label">Endzeit:</label>
                                 <input type="time" class="form-control endTime" id="endTime1">
                             </div>
                         </div>
@@ -212,9 +212,8 @@
                     "END:VEVENT\r\n";
             }
 
-            icsContent += "END:VCALENDAR";
+            icsContent += "END:VCALENDAR\r\n";
 
-            // Erstellung der ICS-Datei und Download
             var blob = new Blob([icsContent], { type: 'text/calendar' });
             var fileName = 'Termine.ics';
             if (window.navigator.msSaveOrOpenBlob) {
@@ -247,23 +246,23 @@
                                 onchange="toggleDateTimeFields(${events})">
                             <label class="custom-control-label" for="allDay${events}">Ganztägiger Termin</label>
                         </div>
-                        <div class="form-row startDateTimeGroup" id="startDateTimeGroup${events}">
+                        <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="startDate${events}">Startdatum:</label>
                                 <input type="date" class="form-control startDate" id="startDate${events}">
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="startTime${events}">Startzeit:</label>
+                                <label for="startTimeLabel${events}" class="time-label">Startzeit:</label>
                                 <input type="time" class="form-control startTime" id="startTime${events}">
                             </div>
                         </div>
-                        <div class="form-row endDateTimeGroup" id="endDateTimeGroup${events}">
+                        <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="endDate${events}">Enddatum:</label>
                                 <input type="date" class="form-control endDate" id="endDate${events}">
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="endTime${events}">Endzeit:</label>
+                                <label for="endTimeLabel${events}" class="time-label">Endzeit:</label>
                                 <input type="time" class="form-control endTime" id="endTime${events}">
                             </div>
                         </div>
@@ -295,15 +294,21 @@
 
         function toggleDateTimeFields(eventNumber) {
             var allDayCheckbox = document.getElementById('allDay' + eventNumber);
-            var startDateTimeGroup = document.getElementById('startDateTimeGroup' + eventNumber);
-            var endDateTimeGroup = document.getElementById('endDateTimeGroup' + eventNumber);
+            var startTime = document.getElementById('startTime' + eventNumber);
+            var startTimeLabel = document.querySelector(`label[for='startTimeLabel${eventNumber}']`);
+            var endTime = document.getElementById('endTime' + eventNumber);
+            var endTimeLabel = document.querySelector(`label[for='endTimeLabel${eventNumber}']`);
 
             if (allDayCheckbox.checked) {
-                startDateTimeGroup.style.display = 'none';
-                endDateTimeGroup.style.display = 'none';
+                startTime.style.display = 'none';
+                startTimeLabel.style.display = 'none';
+                endTime.style.display = 'none';
+                endTimeLabel.style.display = 'none';
             } else {
-                startDateTimeGroup.style.display = 'flex';
-                endDateTimeGroup.style.display = 'flex';
+                startTime.style.display = 'block';
+                startTimeLabel.style.display = 'block';
+                endTime.style.display = 'block';
+                endTimeLabel.style.display = 'block';
             }
         }
 
@@ -313,7 +318,7 @@
 
         function getCurrentDateTimeUTC() {
             var now = new Date();
-            return now.getUTCFullYear() + 
+            return now.getUTCFullYear() +
                 ('0' + (now.getUTCMonth() + 1)).slice(-2) +
                 ('0' + now.getUTCDate()).slice(-2) + 'T' +
                 ('0' + now.getUTCHours()).slice(-2) +
