@@ -33,20 +33,47 @@
             border-color: #0056b3;
         }
 
+        /* Zusätzliche Stile für das Bild */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+        }
+
+        .header img {
+            height: 60px;
+        }
     </style>
+
+
+    <!-- Matomo -->
+<script>
+  var _paq = window._paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://analytics.schellenberger.biz/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '25']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End Matomo Code -->
+
+
+    
 </head>
 
 <body>
     <div class="container mt-5">
         <div class="header">
-      <h1>ICS Datei erstellen</h1>
-     <a href="https://Michael.Schellenberger.biz"><img src="DigitalCoach.png" alt="Digital Coach" style="height: 60px;"></a>
-    </div>
+            <h2 class="mb-4">ICS Datei erstellen</h2>
+            <img src="DigitalCoach.png" alt="Digital Coach">
+        </div>
+
         <div id="eventsContainer">
             <div class="card mb-4">
                 <div class="card-body">
@@ -54,8 +81,8 @@
                     <form class="eventForm">
                         <div class="form-group">
                             <label for="summary1">Titel:</label>
-                            <input type="text" class="form-control summary" id="summary1" placeholder="Titel eingeben"
-                                required>
+                            <input type="text" class="form-control summary" id="summary1"
+                                placeholder="Titel eingeben" required>
                         </div>
                         <div class="custom-control custom-checkbox mb-3">
                             <input type="checkbox" class="custom-control-input allDayCheckbox" id="allDay1"
@@ -84,12 +111,23 @@
                         </div>
                         <div class="form-group">
                             <label for="location1">Ort:</label>
-                            <input type="text" class="form-control location" id="location1" placeholder="Ort eingeben">
+                            <input type="text" class="form-control location" id="location1"
+                                placeholder="Ort eingeben">
                         </div>
                         <div class="form-group">
                             <label for="description1">Beschreibung:</label>
                             <textarea class="form-control description" id="description1" rows="3"
                                 placeholder="Beschreibung eingeben"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="attachment1">Anhang (URL):</label>
+                            <input type="text" class="form-control attachment" id="attachment1"
+                                placeholder="URL des Anhangs eingeben">
+                        </div>
+                        <div class="form-group">
+                            <label for="url1">Link:</label>
+                            <input type="text" class="form-control url" id="url1"
+                                placeholder="URL des Links eingeben">
                         </div>
                     </form>
                 </div>
@@ -141,6 +179,8 @@
                 var endTime = document.getElementById("endTime" + i).value;
                 var location = document.getElementById("location" + i).value;
                 var description = document.getElementById("description" + i).value;
+                var attachment = document.getElementById("attachment" + i).value;
+                var url = document.getElementById("url" + i).value;
 
                 // Überprüfung auf leere Felder je nach Auswahl des ganztägigen Termins
                 if (!summary || (allDay && !startDate) || (!allDay && (!startDate || !startTime || !endDate || !endTime))) {
@@ -160,6 +200,8 @@
                     "DTEND" + (allDay ? ";VALUE=DATE" : "") + ":" + convertToICSDateTime(endDateTime) + "\r\n" +
                     (location ? "LOCATION:" + location + "\r\n" : "") +
                     (description ? "DESCRIPTION:" + description + "\r\n" : "") +
+                    (attachment ? "ATTACH:" + attachment + "\r\n" : "") +
+                    (url ? "URL:" + url + "\r\n" : "") +
                     "STATUS:CONFIRMED\r\n" +
                     "SEQUENCE:1\r\n" +
                     "BEGIN:VALARM\r\n" +
@@ -191,134 +233,98 @@
             events++;
             var eventForm = document.createElement('div');
             eventForm.classList.add('card', 'mb-4');
-            eventForm.innerHTML = `<div class="card-body">
-          <h5 class="card-title">Termin ${events}</h5>
-          <form class="eventForm">
-            <div class="form-group">
-              <label for="summary${events}">Titel:</label>
-              <input type="text" class="form-control summary" id="summary${events}" placeholder="Titel eingeben" required>
-            </div>
-            <div class="custom-control custom-checkbox mb-3">
-              <input type="checkbox" class="custom-control-input allDayCheckbox" id="allDay${events}" onchange="toggleDateTimeFields(${events})">
-              <label class="custom-control-label" for="allDay${events}">Ganztägiger Termin</label>
-            </div>
-            <div class="form-row startDateTimeGroup" id="startDateTimeGroup${events}">
-              <div class="form-group col-md-6">
-                <label for="startDate${events}">Startdatum:</label>
-                <input type="date" class="form-control startDate" id="startDate${events}">
-              </div>
-              <div class="form-group col-md-6">
-                <label for="startTime${events}">Startzeit:</label>
-                <input type="time" class="form-control startTime" id="startTime${events}">
-              </div>
-            </div>
-            <div class="form-row endDateTimeGroup" id="endDateTimeGroup${events}">
-              <div class="form-group col-md-6">
-                <label for="endDate${events}">Enddatum:</label>
-                <input type="date" class="form-control endDate" id="endDate${events}">
-              </div>
-              <div class="form-group col-md-6">
-                <label for="endTime${events}">Endzeit:</label>
-                <input type="time" class="form-control endTime" id="endTime${events}">
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="location${events}">Ort:</label>
-              <input type="text" class="form-control location" id="location${events}" placeholder="Ort eingeben">
-            </div>
-            <div class="form-group">
-              <label for="description${events}">Beschreibung:</label>
-              <textarea class="form-control description" id="description${events}" rows="3" placeholder="Beschreibung eingeben"></textarea>
-            </div>
-          </form>
-        </div>`;
-
+            eventForm.innerHTML = `
+                <div class="card-body">
+                    <h5 class="card-title">Termin ${events}</h5>
+                    <form class="eventForm">
+                        <div class="form-group">
+                            <label for="summary${events}">Titel:</label>
+                            <input type="text" class="form-control summary" id="summary${events}"
+                                placeholder="Titel eingeben" required>
+                        </div>
+                        <div class="custom-control custom-checkbox mb-3">
+                            <input type="checkbox" class="custom-control-input allDayCheckbox" id="allDay${events}"
+                                onchange="toggleDateTimeFields(${events})">
+                            <label class="custom-control-label" for="allDay${events}">Ganztägiger Termin</label>
+                        </div>
+                        <div class="form-row startDateTimeGroup" id="startDateTimeGroup${events}">
+                            <div class="form-group col-md-6">
+                                <label for="startDate${events}">Startdatum:</label>
+                                <input type="date" class="form-control startDate" id="startDate${events}">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="startTime${events}">Startzeit:</label>
+                                <input type="time" class="form-control startTime" id="startTime${events}">
+                            </div>
+                        </div>
+                        <div class="form-row endDateTimeGroup" id="endDateTimeGroup${events}">
+                            <div class="form-group col-md-6">
+                                <label for="endDate${events}">Enddatum:</label>
+                                <input type="date" class="form-control endDate" id="endDate${events}">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="endTime${events}">Endzeit:</label>
+                                <input type="time" class="form-control endTime" id="endTime${events}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="location${events}">Ort:</label>
+                            <input type="text" class="form-control location" id="location${events}"
+                                placeholder="Ort eingeben">
+                        </div>
+                        <div class="form-group">
+                            <label for="description${events}">Beschreibung:</label>
+                            <textarea class="form-control description" id="description${events}" rows="3"
+                                placeholder="Beschreibung eingeben"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="attachment${events}">Anhang (URL):</label>
+                            <input type="text" class="form-control attachment" id="attachment${events}"
+                                placeholder="URL des Anhangs eingeben">
+                        </div>
+                        <div class="form-group">
+                            <label for="url${events}">Link:</label>
+                            <input type="text" class="form-control url" id="url${events}"
+                                placeholder="URL des Links eingeben">
+                        </div>
+                    </form>
+                </div>
+            `;
             document.getElementById('eventsContainer').appendChild(eventForm);
-            initializePlaceholderTexts(); // Setzen der Platzhaltertexte für das neue Formular
         }
 
         function toggleDateTimeFields(eventNumber) {
-            var allDayCheckbox = document.getElementById("allDay" + eventNumber);
-            var startDateTimeGroup = document.getElementById("startDateTimeGroup" + eventNumber);
-            var endDateTimeGroup = document.getElementById("endDateTimeGroup" + eventNumber);
+            var allDayCheckbox = document.getElementById('allDay' + eventNumber);
+            var startDateTimeGroup = document.getElementById('startDateTimeGroup' + eventNumber);
+            var endDateTimeGroup = document.getElementById('endDateTimeGroup' + eventNumber);
 
             if (allDayCheckbox.checked) {
-                startDateTimeGroup.classList.add("hide-time");
-                endDateTimeGroup.classList.add("hide-time");
-                document.getElementById("startTime" + eventNumber).value = "00:00";
-                document.getElementById("endTime" + eventNumber).value = "00:00";
+                startDateTimeGroup.style.display = 'none';
+                endDateTimeGroup.style.display = 'none';
             } else {
-                startDateTimeGroup.classList.remove("hide-time");
-                endDateTimeGroup.classList.remove("hide-time");
+                startDateTimeGroup.style.display = 'flex';
+                endDateTimeGroup.style.display = 'flex';
             }
         }
 
-        function convertToICSDateTime(dateTimeString) {
-            var date = new Date(dateTimeString);
-            var year = date.getUTCFullYear();
-            var month = padNumber(date.getUTCMonth() + 1);
-            var day = padNumber(date.getUTCDate());
-            var hours = padNumber(date.getUTCHours());
-            var minutes = padNumber(date.getUTCMinutes());
-            var seconds = padNumber(date.getUTCSeconds());
-            return year + month + day + "T" + hours + minutes + seconds + "Z";
-        }
-
-        function padNumber(number) {
-            return number < 10 ? '0' + number : number;
-        }
-
         function generateUID() {
-            var dt = new Date().getTime();
-            var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = (dt + Math.random() * 16) % 16 | 0;
-                dt = Math.floor(dt / 16);
-                return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-            });
-            return uuid;
+            return 'uid-' + Math.random().toString(36).substr(2, 9);
         }
 
         function getCurrentDateTimeUTC() {
             var now = new Date();
-            var year = now.getUTCFullYear();
-            var month = padNumber(now.getUTCMonth() + 1);
-            var day = padNumber(now.getUTCDate());
-            var hours = padNumber(now.getUTCHours());
-            var minutes = padNumber(now.getUTCMinutes());
-            var seconds = padNumber(now.getUTCSeconds());
-            return year + month + day + "T" + hours + minutes + seconds + "Z";
+            return now.getUTCFullYear() + 
+                ('0' + (now.getUTCMonth() + 1)).slice(-2) +
+                ('0' + now.getUTCDate()).slice(-2) + 'T' +
+                ('0' + now.getUTCHours()).slice(-2) +
+                ('0' + now.getUTCMinutes()).slice(-2) +
+                ('0' + now.getUTCSeconds()).slice(-2) + 'Z';
+        }
+
+        function convertToICSDateTime(dateTimeString) {
+            return dateTimeString.replace(/[-:]/g, '').replace('.000', '');
         }
     </script>
-
-    <!-- Matomo --> 
-<script>
-  var _paq = window._paq = window._paq || [];
-  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function() {
-    var u="https://analytics.schellenberger.biz/";
-    _paq.push(['setTrackerUrl', u+'matomo.php']);
-    _paq.push(['setSiteId', '25']);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-  })();
-</script>
-<!-- End Matomo Code -->
-
-    
-    <style>
-        .button-container {
-            margin-bottom: 20px;
-            /* Vergrößert den Abstand zwischen dem letzten Button und dem Footer */
-        }
-    </style>
-<footer class="footer mt-4 py-4 bg-dark text-light">
-    <div class="container text-center">
-      <span class="small">&copy; 2024 Michael Schellenberger. Script erstellt am 23. Juni 2024. Besuchen Sie <a href="https://Michael.Schellenberger.biz" target="_blank" class="text-light">https://Michael.Schellenberger.biz</a> für weitere Informationen.</span>
-    </div>
-  </footer>
-    
 </body>
 
 </html>
