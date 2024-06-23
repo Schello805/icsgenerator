@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICS Datei erstellen</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .custom-checkbox .custom-control-label::before {
+            border: 1px solid #adb5bd;
+            background-color: #f8f9fa;
+        }
+
+        .custom-checkbox .custom-control-input:checked~.custom-control-label::before {
+            border-color: #007bff;
+            background-color: #007bff;
+        }
+
+        .custom-checkbox .custom-control-input:checked~.custom-control-label::after {
+            color: #fff;
+        }
+
+        .btn-create {
+            background-color: #007bff;
+            color: #fff;
+            border: 1px solid #007bff;
+        }
+
+        .btn-create:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="header">
+      <h1>ICS Datei erstellen</h1>
+     <a href="https://Michael.Schellenberger.biz"><img src="DigitalCoach.png" alt="Digital Coach" style="height: 60px;"></a>
+    </div>
+        <div id="eventsContainer">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Termin 1</h5>
+                    <form class="eventForm">
+                        <div class="form-group">
+                            <label for="summary1">Titel:</label>
+                            <input type="text" class="form-control summary" id="summary1" placeholder="Titel eingeben"
+                                required>
+                        </div>
+                        <div class="custom-control custom-checkbox mb-3">
+                            <input type="checkbox" class="custom-control-input allDayCheckbox" id="allDay1"
+                                onchange="toggleDateTimeFields(1)">
+                            <label class="custom-control-label" for="allDay1">Ganztägiger Termin</label>
+                        </div>
+                        <div class="form-row startDateTimeGroup" id="startDateTimeGroup1">
+                            <div class="form-group col-md-6">
+                                <label for="startDate1">Startdatum:</label>
+                                <input type="date" class="form-control startDate" id="startDate1">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="startTime1">Startzeit:</label>
+                                <input type="time" class="form-control startTime" id="startTime1">
+                            </div>
+                        </div>
+                        <div class="form-row endDateTimeGroup" id="endDateTimeGroup1">
+                            <div class="form-group col-md-6">
+                                <label for="endDate1">Enddatum:</label>
+                                <input type="date" class="form-control endDate" id="endDate1">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="endTime1">Endzeit:</label>
+                                <input type="time" class="form-control endTime" id="endTime1">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="location1">Ort:</label>
+                            <input type="text" class="form-control location" id="location1" placeholder="Ort eingeben">
+                        </div>
+                        <div class="form-group">
+                            <label for="description1">Beschreibung:</label>
+                            <textarea class="form-control description" id="description1" rows="3"
+                                placeholder="Beschreibung eingeben"></textarea>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-create mr-2" onclick="createICSCalendar()">ICS Datei erstellen</button>
+        <button class="btn btn-secondary" onclick="addAnotherEvent()">Weiteren Termin hinzufügen</button>
+    </div>
+
+    <!-- Bootstrap JS und zusätzliche Abhängigkeiten (optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Benutzerdefiniertes JavaScript -->
+    <script>
+        var scriptRevision = 15; // Fortlaufende Revisionsnummer
+        var events = 1; // Zählvariable für Termine
+
+        // Initialisierung der Seite: Setzen der Platzhaltertexte
+        window.onload = function () {
+            initializePlaceholderTexts();
+        };
+
+        // Funktion zum Setzen der Platzhaltertexte in den Eingabefeldern
+        function initializePlaceholderTexts() {
+            // Platzhaltertexte müssen nicht gesetzt werden, da sie standardmäßig im Browser dargestellt werden
+        }
+
+        function createICSCalendar() {
+            if (events === 0) {
+                alert("Bitte fügen Sie mindestens einen Termin hinzu.");
+                return;
+            }
+
+            var icsContent =
+                "BEGIN:VCALENDAR\r\n" +
+                "VERSION:2.0\r\n" +
+                "PRODID:-//Schellenberger - Digitalcoach//NONSGML Event//DE\r\n" +
+                "CALSCALE:GREGORIAN\r\n";
+
+            for (var i = 1; i <= events; i++) {
+                var summary = document.getElementById("summary" + i).value;
+                var allDay = document.getElementById("allDay" + i).checked;
+                var startDate = document.getElementById("startDate" + i).value;
+                var startTime = document.getElementById("startTime" + i).value;
+                var endDate = document.getElementById("endDate" + i).value;
+                var endTime = document.getElementById("endTime" + i).value;
+                var location = document.getElementById("location" + i).value;
+                var description = document.getElementById("description" + i).value;
+
+                // Überprüfung auf leere Felder je nach Auswahl des ganztägigen Termins
+                if (!summary || (allDay && !startDate) || (!allDay && (!startDate || !startTime || !endDate || !endTime))) {
+                    alert("Bitte füllen Sie Titel und die erforderlichen Datum/Zeit-Felder für Termin " + i + " aus.");
+                    return;
+                }
+
+                var startDateTime = allDay ? startDate + "T00:00:00Z" : startDate + "T" + startTime + ":00";
+                var endDateTime = allDay ? endDate + "T00:00:00Z" : endDate + "T" + endTime + ":00";
+
+                icsContent +=
+                    "BEGIN:VEVENT\r\n" +
+                    "UID:" + generateUID() + "\r\n" +
+                    "SUMMARY:" + summary + "\r\n" +
+                    "DTSTAMP:" + getCurrentDateTimeUTC() + "\r\n" +
+                    "DTSTART" + (allDay ? ";VALUE=DATE" : "") + ":" + convertToICSDateTime(startDateTime) + "\r\n" +
+                    "DTEND" + (allDay ? ";VALUE=DATE" : "") + ":" + convertToICSDateTime(endDateTime) + "\r\n" +
+                    (location ? "LOCATION:" + location + "\r\n" : "") +
+                    (description ? "DESCRIPTION:" + description + "\r\n" : "") +
+                    "STATUS:CONFIRMED\r\n" +
+                    "SEQUENCE:1\r\n" +
+                    "BEGIN:VALARM\r\n" +
+                    "TRIGGER:-PT10M\r\n" +
+                    "DESCRIPTION:Erinnerung\r\n" +
+                    "ACTION:DISPLAY\r\n" +
+                    "END:VALARM\r\n" +
+                    "END:VEVENT\r\n";
+            }
+
+            icsContent += "END:VCALENDAR";
+
+            // Erstellung der ICS-Datei und Download
+            var blob = new Blob([icsContent], { type: 'text/calendar' });
+            var fileName = 'Termine.ics';
+            if (window.navigator.msSaveOrOpenBlob) {
+                window.navigator.msSaveBlob(blob, fileName);
+            } else {
+                var link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.setAttribute('download', fileName);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        function addAnotherEvent() {
+            events++;
+            var eventForm = document.createElement('div');
+            eventForm.classList.add('card', 'mb-4');
+            eventForm.innerHTML = `<div class="card-body">
+          <h5 class="card-title">Termin ${events}</h5>
+          <form class="eventForm">
+            <div class="form-group">
+              <label for="summary${events}">Titel:</label>
+              <input type="text" class="form-control summary" id="summary${events}" placeholder="Titel eingeben" required>
+            </div>
+            <div class="custom-control custom-checkbox mb-3">
+              <input type="checkbox" class="custom-control-input allDayCheckbox" id="allDay${events}" onchange="toggleDateTimeFields(${events})">
+              <label class="custom-control-label" for="allDay${events}">Ganztägiger Termin</label>
+            </div>
+            <div class="form-row startDateTimeGroup" id="startDateTimeGroup${events}">
+              <div class="form-group col-md-6">
+                <label for="startDate${events}">Startdatum:</label>
+                <input type="date" class="form-control startDate" id="startDate${events}">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="startTime${events}">Startzeit:</label>
+                <input type="time" class="form-control startTime" id="startTime${events}">
+              </div>
+            </div>
+            <div class="form-row endDateTimeGroup" id="endDateTimeGroup${events}">
+              <div class="form-group col-md-6">
+                <label for="endDate${events}">Enddatum:</label>
+                <input type="date" class="form-control endDate" id="endDate${events}">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="endTime${events}">Endzeit:</label>
+                <input type="time" class="form-control endTime" id="endTime${events}">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="location${events}">Ort:</label>
+              <input type="text" class="form-control location" id="location${events}" placeholder="Ort eingeben">
+            </div>
+            <div class="form-group">
+              <label for="description${events}">Beschreibung:</label>
+              <textarea class="form-control description" id="description${events}" rows="3" placeholder="Beschreibung eingeben"></textarea>
+            </div>
+          </form>
+        </div>`;
+
+            document.getElementById('eventsContainer').appendChild(eventForm);
+            initializePlaceholderTexts(); // Setzen der Platzhaltertexte für das neue Formular
+        }
+
+        function toggleDateTimeFields(eventNumber) {
+            var allDayCheckbox = document.getElementById("allDay" + eventNumber);
+            var startDateTimeGroup = document.getElementById("startDateTimeGroup" + eventNumber);
+            var endDateTimeGroup = document.getElementById("endDateTimeGroup" + eventNumber);
+
+            if (allDayCheckbox.checked) {
+                startDateTimeGroup.classList.add("hide-time");
+                endDateTimeGroup.classList.add("hide-time");
+                document.getElementById("startTime" + eventNumber).value = "00:00";
+                document.getElementById("endTime" + eventNumber).value = "00:00";
+            } else {
+                startDateTimeGroup.classList.remove("hide-time");
+                endDateTimeGroup.classList.remove("hide-time");
+            }
+        }
+
+        function convertToICSDateTime(dateTimeString) {
+            var date = new Date(dateTimeString);
+            var year = date.getUTCFullYear();
+            var month = padNumber(date.getUTCMonth() + 1);
+            var day = padNumber(date.getUTCDate());
+            var hours = padNumber(date.getUTCHours());
+            var minutes = padNumber(date.getUTCMinutes());
+            var seconds = padNumber(date.getUTCSeconds());
+            return year + month + day + "T" + hours + minutes + seconds + "Z";
+        }
+
+        function padNumber(number) {
+            return number < 10 ? '0' + number : number;
+        }
+
+        function generateUID() {
+            var dt = new Date().getTime();
+            var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = (dt + Math.random() * 16) % 16 | 0;
+                dt = Math.floor(dt / 16);
+                return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+            return uuid;
+        }
+
+        function getCurrentDateTimeUTC() {
+            var now = new Date();
+            var year = now.getUTCFullYear();
+            var month = padNumber(now.getUTCMonth() + 1);
+            var day = padNumber(now.getUTCDate());
+            var hours = padNumber(now.getUTCHours());
+            var minutes = padNumber(now.getUTCMinutes());
+            var seconds = padNumber(now.getUTCSeconds());
+            return year + month + day + "T" + hours + minutes + seconds + "Z";
+        }
+    </script>
+    <style>
+        .button-container {
+            margin-bottom: 20px;
+            /* Vergrößert den Abstand zwischen dem letzten Button und dem Footer */
+        }
+    </style>
+</body>
+
+</html>
