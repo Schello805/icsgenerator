@@ -46,24 +46,6 @@
         }
     </style>
 
-
-    <!-- Matomo -->
-<script>
-  var _paq = window._paq = window._paq || [];
-  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function() {
-    var u="https://analytics.schellenberger.biz/";
-    _paq.push(['setTrackerUrl', u+'matomo.php']);
-    _paq.push(['setSiteId', '25']);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-  })();
-</script>
-<!-- End Matomo Code -->
-
-
     
 </head>
 
@@ -80,7 +62,7 @@
                     <h5 class="card-title">Termin 1</h5>
                     <form class="eventForm">
                         <div class="form-group">
-                            <label for="summary1">Titel:</label>
+                            <label for="summary1">Titel:*</label>
                             <input type="text" class="form-control summary" id="summary1"
                                 placeholder="Titel eingeben" required>
                         </div>
@@ -91,7 +73,7 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label for="startDate1">Startdatum:</label>
+                                <label for="startDate1">Startdatum:*</label>
                                 <input type="date" class="form-control startDate" id="startDate1">
                             </div>
                             <div class="form-group col-md-6">
@@ -101,7 +83,7 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label for="endDate1">Enddatum:</label>
+                                <label for="endDate1">Enddatum:*</label>
                                 <input type="date" class="form-control endDate" id="endDate1">
                             </div>
                             <div class="form-group col-md-6">
@@ -184,7 +166,7 @@
 
                 // Überprüfung auf leere Felder je nach Auswahl des ganztägigen Termins
                 if (!summary || (allDay && !startDate) || (!allDay && (!startDate || !startTime || !endDate || !endTime))) {
-                    alert("Bitte füllen Sie Titel und die erforderlichen Datum/Zeit-Felder für Termin " + i + " aus.");
+                    alert("Bitte füllen Sie Titel und die Pflichtfelder für Termin " + i + " aus.");
                     return;
                 }
 
@@ -330,6 +312,13 @@
             return dateTimeString.replace(/[-:]/g, '').replace('.000', '');
         }
     </script>
+    
+     <footer class="footer mt-4 py-4 bg-dark text-light">
+          <div class="container text-center">
+            <span class="small">&copy; 2024 Michael Schellenberger. Script erstellt am 23. Juni 2024. Besuchen Sie <a href="https://Michael.Schellenberger.biz" target="_blank" class="text-light">https://Michael.Schellenberger.biz</a> für weitere Informationen.</span>
+          </div>
+    </footer>
+    
 </body>
 
 </html>
